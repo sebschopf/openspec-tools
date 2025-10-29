@@ -73,9 +73,9 @@ if(-not $stdoutPath){
   # Strategy 2: fallback to passing the prompt as an argument and capturing stdout
   if(-not $succeeded){
     try{
-      $args = @('-m','code-assist','-p', $promptText, '-o','text')
-      # Use Start-Process to reliably capture stdout to file
-      Start-Process -FilePath (Get-Command gemini).Source -ArgumentList $args -NoNewWindow -Wait -RedirectStandardOutput $stdoutPath -RedirectStandardError ([System.IO.Path]::Combine($dest,'gemini.err'))
+    $genArgs = @('-m','code-assist','-p', $promptText, '-o','text')
+    # Use Start-Process to reliably capture stdout to file
+    Start-Process -FilePath (Get-Command gemini).Source -ArgumentList $genArgs -NoNewWindow -Wait -RedirectStandardOutput $stdoutPath -RedirectStandardError ([System.IO.Path]::Combine($dest,'gemini.err'))
       if((Test-Path $stdoutPath) -and ((Get-Item $stdoutPath).Length -gt 0)){ $succeeded = $true }
     } catch {
       # ignore and surface below
@@ -85,8 +85,8 @@ if(-not $stdoutPath){
   # Strategy 3: try positional prompt first then flags (some gemini CLIs expect the prompt as the first positional arg)
   if(-not $succeeded){
     try{
-      $args2 = @($promptText, '-m','code-assist','-o','text')
-      Start-Process -FilePath (Get-Command gemini).Source -ArgumentList $args2 -NoNewWindow -Wait -RedirectStandardOutput $stdoutPath -RedirectStandardError ([System.IO.Path]::Combine($dest,'gemini.err2'))
+  $genArgs2 = @($promptText, '-m','code-assist','-o','text')
+  Start-Process -FilePath (Get-Command gemini).Source -ArgumentList $genArgs2 -NoNewWindow -Wait -RedirectStandardOutput $stdoutPath -RedirectStandardError ([System.IO.Path]::Combine($dest,'gemini.err2'))
       if((Test-Path $stdoutPath) -and ((Get-Item $stdoutPath).Length -gt 0)){ $succeeded = $true }
     } catch {
       # ignore
