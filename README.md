@@ -33,3 +33,28 @@ pwsh -File .\scripts\generate-openspec.ps1 -Title "ma-change"
 ```powershell
 npm run validate:openspec
 ```
+
+Exemples et conseils
+--------------------
+
+- Utiliser `-GeminiCmdTemplate` si ta CLI Gemini a des flags spécifiques :
+
+```powershell
+# Exemple : la CLI attend le prompt positionnel et accepte -m pour le model
+pwsh -File .\scripts\generate-openspec.ps1 -Title "ma-change" -GeminiCmdTemplate "gemini {promptfile} -m code-assist -o text > {outfile}" -Verbose
+```
+
+- Si tu préfères générer la sortie manuellement (debug) :
+
+```powershell
+# 1) Génére la sortie LLM dans un fichier (adapte selon ta CLI)
+gemini -m code-assist -p "@C:\chemin\vers\tmpfile" -o text > C:\projet\openspec\changes\ma-change\stdout.txt
+
+# 2) Demande au script d'utiliser ce stdout
+pwsh -File .\scripts\generate-openspec.ps1 -Title "ma-change" -StdoutFile "C:\projet\openspec\changes\ma-change\stdout.txt" -Verbose
+```
+
+- Débogage rapide :
+	- Exécute le script avec `-Verbose` pour voir les messages d'information.
+	- Si la validation CI échoue, le workflow poste une copie tronquée de la sortie dans un commentaire de PR et sauvegarde l'artifact `validation-output.txt` (téléchargeable depuis l'onglet Actions).
+

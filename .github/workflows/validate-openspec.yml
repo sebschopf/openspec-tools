@@ -22,4 +22,28 @@ jobs:
         run: npm ci
 
       - name: Run OpenSpec validation
-        run: npm run validate:openspec
+        id: validate
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          npm run validate:openspec 2>&1 | tee validation-output.txt
+
+      - name: Upload validation output (artifact)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: validate-openspec-output-${{ github.event.number || github.event.pull_request.number }}
+          path: validation-output.txt
+
+      - name: Comment on PR when validation fails
+        if: steps.validate.outcome != 'success'
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require('fs');
+            const body = fs.existsSync('validation-output.txt') ? fs.readFileSync('validation-output.txt','utf8') : 'No output captured.';
+            const pr = context.payload.pull_request.number;
+            const max = 65000;
+            const content = body.length > max ? body.slice(0, max) + '\n\n[truncated]' : body;
+            const comment = `:warning: OpenSpec validation failed.\n\n\`\`\`\n${content}\n\`\`\``;
+            await github.rest.issues.createComment({ owner: context.repo.owner, repo: context.repo.repo, issue_number: pr, body: comment });
