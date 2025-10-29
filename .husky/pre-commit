@@ -2,7 +2,17 @@
 . "$(dirname "$0")/_/husky.sh"
 
 echo "Running OpenSpec validation (pre-commit)..."
+# Determine staged files under openspec/changes and extract unique change-set names
+staged=$(git diff --name-only --cached)
+targets=$(echo "$staged" | grep '^openspec/changes/' | awk -F'/' '{print $3}' | sort -u | tr '\n' ',' | sed 's/,$//')
+if [ -z "$targets" ]; then
+  echo "No openspec change-sets staged — skipping OpenSpec validation."
+  exit 0
+fi
+
+echo "Validating change-sets: $targets"
+export OPEN_SPEC_ONLY="$targets"
 npm run validate:openspec || {
-  echo "OpenSpec validation failed. Commit aborted."
+  echo "OpenSpec validation failed for: $targets. Commit aborted."
   exit 1
 }

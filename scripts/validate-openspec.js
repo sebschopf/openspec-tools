@@ -29,10 +29,19 @@ for(const name of requiredRootFiles){
 }
 
 const changesDir = path.join(openspecDir, 'changes');
+// If OPEN_SPEC_ONLY is set (comma-separated list of change-set names), only validate those
+const onlyEnv = process.env.OPEN_SPEC_ONLY || '';
+const onlyList = onlyEnv.split(',').map(s=>s.trim()).filter(Boolean);
 if(!fs.existsSync(changesDir)){
   err('Le dossier `openspec/changes/` est introuvable ou vide.');
 } else {
-  const subs = fs.readdirSync(changesDir, {withFileTypes:true}).filter(d=>d.isDirectory()).map(d=>d.name);
+  let subs = fs.readdirSync(changesDir, {withFileTypes:true}).filter(d=>d.isDirectory()).map(d=>d.name);
+  if(onlyList.length>0){
+    subs = subs.filter(s=> onlyList.includes(s));
+    if(subs.length===0){
+      err('Aucun change-set trouvé correspondant à OPEN_SPEC_ONLY: ' + onlyList.join(','));
+    }
+  }
   if(subs.length===0){
     err('Aucun sous-dossier trouvé dans `openspec/changes/`.');
   } else {
