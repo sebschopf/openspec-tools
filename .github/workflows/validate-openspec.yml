@@ -5,6 +5,13 @@ on:
     types: [opened, synchronize, reopened]
   workflow_dispatch: {}
 
+# Permissions needed so the job can post comments and create CheckRuns
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+  checks: write
+
 jobs:
   validate:
     name: Validate OpenSpec files
