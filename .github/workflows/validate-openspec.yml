@@ -45,7 +45,7 @@ jobs:
           path: validation-output.txt
 
       - name: Comment on PR when validation fails
-        if: steps.validate.outcome != 'success'
+        if: github.event_name == 'pull_request' && steps.validate.outcome != 'success'
         uses: actions/github-script@v6
         with:
           script: |
