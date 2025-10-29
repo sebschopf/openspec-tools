@@ -5,6 +5,13 @@ on:
     types: [opened, synchronize, reopened]
   workflow_dispatch: {}
 
+# Permissions needed so the job can post comments and create CheckRuns
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+  checks: write
+
 jobs:
   validate:
     name: Validate OpenSpec files
@@ -58,7 +65,6 @@ jobs:
             await github.rest.issues.createComment({ owner: context.repo.owner, repo: context.repo.repo, issue_number: pr, body: comment });
 
       - name: Create CheckRun with validation output
-        if: github.event_name == 'pull_request' && steps.validate.outcome != 'success'
         uses: actions/github-script@v6
         with:
           script: |
@@ -66,16 +72,18 @@ jobs:
             const body = fs.existsSync('validation-output.txt') ? fs.readFileSync('validation-output.txt','utf8') : 'No output captured.';
             const max = 64000;
             const summary = body.length > max ? body.slice(0, max) + '\n\n[truncated]' : body;
-            const head_sha = context.payload.pull_request.head.sha;
+            const head_sha = context.payload && context.payload.pull_request ? context.payload.pull_request.head.sha : process.env.GITHUB_SHA;
+            const conclusion = '${{ steps.validate.outcome }}' === 'success' ? 'success' : 'failure';
+            const title = conclusion === 'success' ? 'OpenSpec validation passed' : 'OpenSpec validation failed';
             await github.rest.checks.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
               name: 'OpenSpec Validator Report',
               head_sha: head_sha,
               status: 'completed',
-              conclusion: 'failure',
+              conclusion: conclusion,
               output: {
-                title: 'OpenSpec validation failed',
+                title: title,
                 summary: summary
               }
             });
