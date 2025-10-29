@@ -1,0 +1,20 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "OpenSpec: Init",
+      "type": "shell",
+      "command": "npm run openspec:init",
+      "group": "none",
+      "presentation": { "reveal": "always", "panel": "shared" }
+    },
+    {
+      "label": "OpenSpec: Validate",
+      "type": "shell",
+      "command": "npm run validate:openspec",
+      "group": "test",
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    }
+  ]
+}
