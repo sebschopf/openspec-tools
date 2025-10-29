@@ -1,0 +1,8 @@
+#!/usr/bin/env sh
+. "$(dirname "$0")/_/husky.sh"
+
+echo "Running OpenSpec validation (pre-commit)..."
+npm run validate:openspec || {
+  echo "OpenSpec validation failed. Commit aborted."
+  exit 1
+}

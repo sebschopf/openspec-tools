@@ -1,0 +1,12 @@
+{
+  "name": "openspec-tools",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "validate:openspec": "node ./scripts/run-validate-wrapper.js",
+    "prepare": "husky install"
+  },
+  "devDependencies": {
+    "husky": "^8.0.0"
+  }
+}

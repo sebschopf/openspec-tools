@@ -1,0 +1,5 @@
+# Code owners for OpenSpec tooling and validation
+# Format: <pattern> <owner>
+/.github/ @sebschopf
+/scripts/ @sebschopf
+/README.md @sebschopf
