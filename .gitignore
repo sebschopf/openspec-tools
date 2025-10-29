@@ -1,0 +1,9 @@
+# Ignore generated OpenSpec outputs produced by local runs
+openspec/changes/*
+
+# Node artifacts
+node_modules/
+/.npm
+
+# Logs
+*.log
