@@ -2,6 +2,10 @@
 
 Ce dépôt contient des utilitaires pour faciliter la génération et la validation d'OpenSpec (snippets VS Code, tâches, scripts de validation et génération via CLI LLM).
 
+[![Validate OpenSpec](https://github.com/sebschopf/openspec-tools/actions/workflows/validate-openspec.yml/badge.svg)](https://github.com/sebschopf/openspec-tools/actions/workflows/validate-openspec.yml)
+
+Validation CI: cette action exécute la validation OpenSpec (via `npm run validate:openspec`) sur chaque pull request.
+
 Fichiers inclus:
 - `.vscode/snippets/openspec.code-snippets` — snippet VS Code pour générer un prompt OpenSpec standardisé
 - `.vscode/tasks.json` — tâches VS Code pour init/validate
